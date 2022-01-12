@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/AbsoluteLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_x="957dp"
+        android:layout_y="62dp"
+        android:text="@string/log"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/buttonSDKTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="765dp"
+        android:layout_y="1dp"
+        android:text="@string/sdktest"
+        android:textSize="36sp" />
+
+    <EditText
+        android:id="@+id/editLog"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_x="775dp"
+        android:layout_y="100dp"
+        android:inputType="none|textMultiLine" />
+
+    <ImageView
+        android:id="@+id/imageViewFingerprint"
+        android:layout_width="158dp"
+        android:layout_height="181dp"
+        android:layout_x="31dp"
+        android:layout_y="101dp"
+        android:contentDescription="@string/fingerprint_capture_image"
+        android:src="@android:drawable/picture_frame" />
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="683dp"
+        android:layout_height="108dp"
+        android:layout_x="34dp"
+        android:layout_y="289dp"
+        android:text="@string/welcome"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/buttonCapture"
+        android:layout_width="154dp"
+        android:layout_height="84dp"
+        android:layout_x="245dp"
+        android:layout_y="155dp"
+        android:text="Marcar Asistencia"
+        android:textSize="16sp" />
+
+    <ToggleButton
+        android:id="@+id/ToggleButtonUSBBulkMode64"
+        android:layout_width="174dp"
+        android:layout_height="wrap_content"
+        android:layout_x="544dp"
+        android:layout_y="351dp"
+        android:text="@string/usb_bulk_mode_64_off"
+        android:textOff="@string/usb_bulk_mode_64_off"
+        android:textOn="@string/usb_bulk_mode_64_on"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="70dp"
+        android:layout_height="33dp"
+        android:layout_x="29dp"
+        android:layout_y="20dp"
+        android:text="Aula:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtdatoClase"
+        android:layout_width="287dp"
+        android:layout_height="93dp"
+        android:layout_x="424dp"
+        android:layout_y="66dp"
+        android:text="------------------------"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtdatosAlu"
+        android:layout_width="287dp"
+        android:layout_height="93dp"
+        android:layout_x="424dp"
+        android:layout_y="186dp"
+        android:text="------------------------"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnbuscar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="299dp"
+        android:layout_y="9dp"
+        android:text="Buscar Clase" />
+
+    <Spinner
+        android:id="@+id/codAula"
+        android:layout_width="167dp"
+        android:layout_height="39dp"
+        android:layout_x="105dp"
+        android:layout_y="20dp" />
+
+</AbsoluteLayout>

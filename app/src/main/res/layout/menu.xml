@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/AbsoluteLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Button
+        android:id="@+id/btnmarcar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_x="111dp"
+        android:layout_y="228dp"
+        android:text="Marcar Asistencia" />
+
+    <Button
+        android:id="@+id/btnregistrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnmarcar"
+        android:layout_centerHorizontal="true"
+        android:layout_x="103dp"
+        android:layout_y="318dp"
+        android:text="Registrar Huellas" />
+
+    <Button
+        android:id="@+id/btnsalir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnregistrar"
+        android:layout_marginTop="214dp"
+        android:layout_x="176dp"
+        android:layout_y="435dp"
+        android:text="Salir" />
+
+    <TextView
+        android:id="@+id/state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnsalir"
+        android:layout_centerHorizontal="true" />
+
+</AbsoluteLayout>

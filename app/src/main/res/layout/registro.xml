@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/AbsoluteLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_x="957dp"
+        android:layout_y="62dp"
+        android:text="@string/log"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/buttonSDKTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="765dp"
+        android:layout_y="1dp"
+        android:text="@string/sdktest"
+        android:textSize="36sp" />
+
+    <EditText
+        android:id="@+id/editLog"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_x="775dp"
+        android:layout_y="100dp"
+        android:inputType="none|textMultiLine" />
+
+    <ImageView
+        android:id="@+id/imageViewFingerprint"
+        android:layout_width="208dp"
+        android:layout_height="218dp"
+        android:layout_x="15dp"
+        android:layout_y="103dp"
+        android:contentDescription="@string/fingerprint_capture_image"
+        android:src="@android:drawable/picture_frame" />
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="378dp"
+        android:layout_height="40dp"
+        android:layout_x="19dp"
+        android:layout_y="574dp"
+        android:text="@string/welcome"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:contentDescription="@string/secugen_device_image"
+        android:layout_width="155dp"
+        android:layout_height="155dp"
+        android:layout_x="448dp"
+        android:layout_y="8dp"
+        android:src="@drawable/hamster4" />
+
+    <Button
+        android:id="@+id/buttonCapture"
+        android:layout_width="154dp"
+        android:layout_height="84dp"
+        android:layout_x="227dp"
+        android:layout_y="99dp"
+        android:text="Capturar Huella 1"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btntemp"
+        android:layout_width="154dp"
+        android:layout_height="87dp"
+        android:layout_x="227dp"
+        android:layout_y="327dp"
+        android:text="Capturar Huella 2"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btnatraz"
+        android:layout_width="154dp"
+        android:layout_height="64dp"
+        android:layout_x="205dp"
+        android:layout_y="636dp"
+        android:background="@android:color/holo_orange_light"
+        android:text="Regresar"
+        android:textColor="#3949AB"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/buttonSetBrightness100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="423dp"
+        android:layout_y="300dp"
+        android:text="@string/set_brightness_100"/>
+
+    <Button
+        android:id="@+id/buttonReadSN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="423dp"
+        android:layout_y="353dp"
+        android:text="@string/read_serial_number"/>
+
+    <Button
+        android:id="@+id/buttonSetBrightness0"
+        android:layout_width="174dp"
+        android:layout_height="wrap_content"
+        android:layout_x="425dp"
+        android:layout_y="248dp"
+        android:text="@string/set_brightness_0" />
+
+    <ToggleButton
+        android:id="@+id/ToggleButtonUSBBulkMode64"
+        android:layout_width="174dp"
+        android:layout_height="wrap_content"
+        android:layout_x="424dp"
+        android:layout_y="194dp"
+        android:text="@string/usb_bulk_mode_64_off"
+        android:textOff="@string/usb_bulk_mode_64_off"
+        android:textOn="@string/usb_bulk_mode_64_on" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="70dp"
+        android:layout_height="33dp"
+        android:layout_x="29dp"
+        android:layout_y="20dp"
+        android:text="CodAlu:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtdatoClase"
+        android:layout_width="358dp"
+        android:layout_height="33dp"
+        android:layout_x="29dp"
+        android:layout_y="60dp"
+        android:text="------------------------"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imgtemp"
+        android:layout_width="211dp"
+        android:layout_height="221dp"
+        android:layout_x="13dp"
+        android:layout_y="333dp"
+        app:srcCompat="@drawable/hamster4" />
+
+    <Button
+        android:id="@+id/btncomp"
+        android:layout_width="154dp"
+        android:layout_height="64dp"
+        android:layout_x="229dp"
+        android:layout_y="491dp"
+        android:text="Comparar Huellas"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btnbuscar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="299dp"
+        android:layout_y="9dp"
+        android:text="Buscar" />
+
+    <EditText
+        android:id="@+id/txtCodAula"
+        android:layout_width="182dp"
+        android:layout_height="wrap_content"
+        android:layout_x="105dp"
+        android:layout_y="12dp"
+        android:ems="10"
+        android:hint="Codigo de Alumno"
+        android:inputType="number"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/btnGuardar"
+        android:layout_width="124dp"
+        android:layout_height="60dp"
+        android:layout_x="57dp"
+        android:layout_y="642dp"
+        android:background="@color/teal_200"
+        android:text="Guardar" />
+
+</AbsoluteLayout>
