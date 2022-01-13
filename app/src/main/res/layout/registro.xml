@@ -10,10 +10,11 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_x="957dp"
-        android:layout_y="62dp"
+        android:layout_x="675dp"
+        android:layout_y="31dp"
         android:text="@string/log"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/buttonSDKTest"
@@ -22,15 +23,17 @@
         android:layout_x="765dp"
         android:layout_y="1dp"
         android:text="@string/sdktest"
-        android:textSize="36sp" />
+        android:textSize="36sp"
+        android:visibility="invisible" />
 
     <EditText
         android:id="@+id/editLog"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_x="775dp"
-        android:layout_y="100dp"
-        android:inputType="none|textMultiLine" />
+        android:layout_width="389dp"
+        android:layout_height="564dp"
+        android:layout_x="654dp"
+        android:layout_y="133dp"
+        android:inputType="none|textMultiLine"
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/imageViewFingerprint"
@@ -52,19 +55,20 @@
 
     <ImageView
         android:id="@+id/imageView1"
-        android:contentDescription="@string/secugen_device_image"
         android:layout_width="155dp"
         android:layout_height="155dp"
         android:layout_x="448dp"
         android:layout_y="8dp"
-        android:src="@drawable/hamster4" />
+        android:contentDescription="@string/secugen_device_image"
+        android:src="@drawable/hamster4"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/buttonCapture"
         android:layout_width="154dp"
         android:layout_height="84dp"
-        android:layout_x="227dp"
-        android:layout_y="99dp"
+        android:layout_x="246dp"
+        android:layout_y="107dp"
         android:text="Capturar Huella 1"
         android:textSize="16sp" />
 
@@ -72,8 +76,8 @@
         android:id="@+id/btntemp"
         android:layout_width="154dp"
         android:layout_height="87dp"
-        android:layout_x="227dp"
-        android:layout_y="327dp"
+        android:layout_x="245dp"
+        android:layout_y="339dp"
         android:text="Capturar Huella 2"
         android:textSize="16sp" />
 
@@ -81,8 +85,8 @@
         android:id="@+id/btnatraz"
         android:layout_width="154dp"
         android:layout_height="64dp"
-        android:layout_x="205dp"
-        android:layout_y="636dp"
+        android:layout_x="241dp"
+        android:layout_y="640dp"
         android:background="@android:color/holo_orange_light"
         android:text="Regresar"
         android:textColor="#3949AB"
@@ -94,7 +98,8 @@
         android:layout_height="wrap_content"
         android:layout_x="423dp"
         android:layout_y="300dp"
-        android:text="@string/set_brightness_100"/>
+        android:text="@string/set_brightness_100"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/buttonReadSN"
@@ -102,7 +107,8 @@
         android:layout_height="wrap_content"
         android:layout_x="423dp"
         android:layout_y="353dp"
-        android:text="@string/read_serial_number"/>
+        android:text="@string/read_serial_number"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/buttonSetBrightness0"
@@ -110,7 +116,8 @@
         android:layout_height="wrap_content"
         android:layout_x="425dp"
         android:layout_y="248dp"
-        android:text="@string/set_brightness_0" />
+        android:text="@string/set_brightness_0"
+        android:visibility="invisible" />
 
     <ToggleButton
         android:id="@+id/ToggleButtonUSBBulkMode64"
@@ -120,7 +127,8 @@
         android:layout_y="194dp"
         android:text="@string/usb_bulk_mode_64_off"
         android:textOff="@string/usb_bulk_mode_64_off"
-        android:textOn="@string/usb_bulk_mode_64_on" />
+        android:textOn="@string/usb_bulk_mode_64_on"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/textView"
@@ -154,7 +162,7 @@
         android:id="@+id/btncomp"
         android:layout_width="154dp"
         android:layout_height="64dp"
-        android:layout_x="229dp"
+        android:layout_x="242dp"
         android:layout_y="491dp"
         android:text="Comparar Huellas"
         android:textSize="16sp" />
