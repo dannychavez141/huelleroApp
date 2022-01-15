@@ -18,9 +18,11 @@ import android.content.BroadcastReceiver;
 import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Base64;
 import android.util.Log;
@@ -61,15 +63,12 @@ public class Principal extends Activity
     private static final String TAG = "SecuGen USB";
     private static final int IMAGE_CAPTURE_TIMEOUT_MS = 10000;
     private static final int IMAGE_CAPTURE_QUALITY = 50;
-
     private Button mButtonCapture;
     private Button btnBuscar;
-    static public TextView txtnomAlu,txtdatosalu;
+    static public TextView txtnomAlu, txtdatosalu;
     private android.widget.TextView mTextViewResult;
-
     private PendingIntent mPermissionIntent;
     private ImageView mImageViewFingerprint;
-
     private int[] mMaxTemplateSize;
     private int mImageWidth;
     private int mImageHeight;
@@ -79,7 +78,7 @@ public class Principal extends Activity
     private SGAutoOnEventNotifier autoOn;
     private boolean mLed;
     private boolean mAutoOnEnabled;
-    private byte[] imagen1, imagen2,foto;
+    private byte[] imagen1, imagen2, foto;
     private byte[] imagen1Template;
     private byte[] imagen2Template;
     private boolean bSecuGenDeviceOpened;
@@ -94,6 +93,7 @@ public class Principal extends Activity
     private Spinner aulas;
     ArrayAdapter<String> comboAdapter;
     private cAlumno alumno;
+    private MediaPlayer Sonidoentrada, Sonidoerror;
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,11 +130,13 @@ public class Principal extends Activity
         }
     };
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "Enter onCreate()");
+
         servidor = new config(this);
+        Sonidoentrada = MediaPlayer.create(this, R.raw.ok);
+        Sonidoerror = MediaPlayer.create(this, R.raw.error);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.principal);
         mButtonCapture = (Button) findViewById(R.id.buttonCapture);
@@ -151,6 +153,8 @@ public class Principal extends Activity
         grayBitmap = Bitmap.createBitmap(JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES, JSGFPLib.MAX_IMAGE_HEIGHT_ALL_DEVICES, Bitmap.Config.ARGB_8888);
         grayBitmap.setPixels(grayBuffer, 0, JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES, 0, 0, JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES, JSGFPLib.MAX_IMAGE_HEIGHT_ALL_DEVICES);
         mImageViewFingerprint.setImageBitmap(grayBitmap);
+        Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.unu);
+        mImageViewFingerprint.setImageBitmap(logo);
         int[] sintbuffer = new int[(JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES / 2) * (JSGFPLib.MAX_IMAGE_HEIGHT_ALL_DEVICES / 2)];
         for (int i = 0; i < sintbuffer.length; ++i)
             sintbuffer[i] = Color.GRAY;
@@ -175,6 +179,7 @@ public class Principal extends Activity
         comboAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaaulas);
         //Cargo el spinner con los datos
         aulas.setAdapter(comboAdapter);
+        mButtonCapture.setEnabled(false);
 
     }
 
@@ -320,36 +325,66 @@ public class Principal extends Activity
     //////////////////////////////////////////////////////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void captura1() {
-        long result;
-        imagen1 = new byte[mImageWidth * mImageHeight];
-        result = sgfplib.GetImageEx(imagen1, IMAGE_CAPTURE_TIMEOUT_MS, IMAGE_CAPTURE_QUALITY);
-        String NFIQString = "";
+
+        try {
+            long result;
+            imagen1 = new byte[mImageWidth * mImageHeight];
+
+            result = sgfplib.GetImageEx(imagen1, IMAGE_CAPTURE_TIMEOUT_MS, IMAGE_CAPTURE_QUALITY);
+
         if (result == SGFDxErrorCode.SGFDX_ERROR_NONE) {
-            DumpFile("capture2016.raw", imagen2);
+           DumpFile("capture2016.raw", imagen1);
             mTextViewResult.setText("Huella  capturada\n");
             mImageViewFingerprint.setImageBitmap(this.toGrayscale(imagen1));
+
         }
         int pos = comparar();
-        if (pos > -1) {
-            Toast.makeText(getApplicationContext(), "Identificado", Toast.LENGTH_LONG).show();
-            alumno=alumnos[pos];
-            llenaralumno(alumno);
-        } else {
-            Toast.makeText(getApplicationContext(), "Alumno no identificado", Toast.LENGTH_LONG).show();
+            if (pos > -1) {
+                Toast.makeText(getApplicationContext(), "Identificado", Toast.LENGTH_LONG).show();
+                alumno = alumnos[pos];
+                llenaralumno(alumno);
+            } else {
+                Toast.makeText(getApplicationContext(), "Alumno no identificado", Toast.LENGTH_LONG).show();
+                Sonidoerror.start();
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.unu);
+                        mImageViewFingerprint.setImageBitmap(logo);
+                        // Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_LONG).show();
+                        txtdatosalu.setText("______________");
+                        mTextViewResult.setText("--------------");
+                    }
+                }, 3000);
+            }
+
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
         return;
     }
 
-public void llenaralumno(cAlumno alumno){
-this.marcarAsistencia();
-    txtdatosalu.setText("");
-    txtdatosalu.append("Codigo: " + alumno.getCodigo() + "\n");
-    txtdatosalu.append("Alumno: \n" + alumno.getNombres() + "\n");
-    foto = Base64.decode(alumno.getFoto(), Base64.DEFAULT);
-    Bitmap decodedByte = BitmapFactory.decodeByteArray(foto, 0, foto.length);
-    mImageViewFingerprint.setImageBitmap(decodedByte);
-
-}
+    public void llenaralumno(cAlumno alumno) {
+        this.marcarAsistencia();
+        txtdatosalu.setText("");
+        txtdatosalu.append("Codigo: " + alumno.getCodigo() + "\n");
+        txtdatosalu.append("Alumno: \n" + alumno.getNombres() + "\n");
+        foto = Base64.decode(alumno.getFoto(), Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(foto, 0, foto.length);
+        mImageViewFingerprint.setImageBitmap(decodedByte);
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.unu);
+                mImageViewFingerprint.setImageBitmap(logo);
+               // Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_LONG).show();
+                txtdatosalu.setText("______________");
+                mTextViewResult.setText("--------------");
+            }
+        }, 3000);
+    }
 
     public int comparar() {
 
@@ -368,7 +403,7 @@ this.marcarAsistencia();
         for (int i = 0; i < alumnos.length; i++) {
             try {
 
-                if (alumnos[i].getImghuella1().length()>10) {
+                if (alumnos[i].getImghuella1().length() > 10) {
                     boolean[] matched = new boolean[1];
                     imagen2Template = new byte[(int) mMaxTemplateSize[0]];
                     result = sgfplib.SetTemplateFormat(SGFDxTemplateFormat.TEMPLATE_FORMAT_SG400);
@@ -413,7 +448,7 @@ this.marcarAsistencia();
 
         if (v == btnBuscar) {
             this.obtenerClase(aulas.getSelectedItem().toString());
-            this.obtenerAlumnos(aulas.getSelectedItem().toString());
+
 
         }
 
@@ -445,9 +480,12 @@ this.marcarAsistencia();
                         alumnos[i] = alumno;
                     }
 
-                    // Toast.makeText(getApplicationContext(), "alumnos obtenidos", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Clase obtenida", Toast.LENGTH_SHORT).show();
+                    mButtonCapture.setEnabled(true);
                 } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "No Existen Clases en el Aula.", Toast.LENGTH_LONG).show();
+                    mButtonCapture.setEnabled(false);
+
                 }
 
 
@@ -455,7 +493,8 @@ this.marcarAsistencia();
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "No Existen Clases en el Aula.", Toast.LENGTH_LONG).show();
             }
         });
         requestQueu = Volley.newRequestQueue(getApplicationContext());
@@ -464,8 +503,9 @@ this.marcarAsistencia();
     }
 
     public void obtenerClase(String cod) {
+        mButtonCapture.setEnabled(false);
         String api = servidor.getServidor() + "asistencia/apis/clasesApi.php?ac=bultimaclaseaula&cod=" + cod;
-       //  Toast.makeText(getApplicationContext(), api, Toast.LENGTH_LONG).show();
+        //  Toast.makeText(getApplicationContext(), api, Toast.LENGTH_LONG).show();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -499,9 +539,10 @@ this.marcarAsistencia();
                         txtnomAlu.append("Aula " + aula + " - " + anio + "\n");
 
                     }
-                    Toast.makeText(getApplicationContext(), "Clase obtenida", Toast.LENGTH_LONG).show();
+                    obtenerAlumnos(cod);
+
                 } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "No existen Clases en el Aula.", Toast.LENGTH_LONG).show();
                 }
 
 
@@ -509,7 +550,8 @@ this.marcarAsistencia();
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "No Existen Clases en el Aula.", Toast.LENGTH_LONG).show();
             }
         });
         requestQueu = Volley.newRequestQueue(getApplicationContext());
@@ -517,15 +559,21 @@ this.marcarAsistencia();
 
     }
 
-    public void marcarAsistencia(){
+    public void marcarAsistencia() {
         String url = servidor.getServidor() + "asistencia/apis/asistenciaApi.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-              mTextViewResult.setText(response);
 
-                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_LONG).show();
-               // Log.i("sql",response);
+                mTextViewResult.setText(response);
+                if (response.equals("USTED YA MARCO SU ASISTENCIA Y SU SALIDA")) {
+                    Sonidoerror.start();
+                } else {
+                    Sonidoentrada.start();
+                }
+
+               // Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                // Log.i("sql",response);
             }
 
         }, new Response.ErrorListener() {
@@ -538,7 +586,7 @@ this.marcarAsistencia();
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parametros = new HashMap<String, String>();
                 parametros.put("ac", "reg");
-                parametros.put("idClase",clase.getId());
+                parametros.put("idClase", clase.getId());
                 parametros.put("codAlu", alumno.getCodigo());
 
 
@@ -548,6 +596,7 @@ this.marcarAsistencia();
         requestQueu = Volley.newRequestQueue(this);
         requestQueu.add(stringRequest);
     }
+
     //////////////////////////////////////////////////////////////////////////////////////////////
     public void run() {
 
