@@ -433,7 +433,7 @@ public class Registro extends Activity
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     public void obtenerAlumnos(Context ctx, String cod, String server) {
-        String api = server + "asistencia/apis/alumnosApi.php?ac=buno&cod=" + cod;
+        String api = server + "apis/alumnosApi.php?ac=buno&cod=" + cod;
         Toast.makeText(ctx, api, Toast.LENGTH_LONG).show();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
             @Override
@@ -473,7 +473,7 @@ public class Registro extends Activity
     }
 
     public void guardar(String server) {
-        String url = server + "asistencia/apis/alumnosApi.php";
+        String url = server + "apis/alumnosApi.php";
         Toast.makeText(this, url, Toast.LENGTH_LONG).show();
         try {
             String h1=Base64.encodeToString(imagen1, Base64.DEFAULT);

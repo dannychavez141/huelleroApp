@@ -457,7 +457,7 @@ public class Principal extends Activity
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     public void obtenerAlumnos(String cod) {
-        String api = servidor.getServidor() + "asistencia/apis/alumnosApi.php?ac=AAula&aula=" + cod;
+        String api = servidor.getServidor() + "apis/alumnosApi.php?ac=AAula&aula=" + cod;
         //Toast.makeText(getApplicationContext(), api, Toast.LENGTH_LONG).show();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
             @Override
@@ -504,7 +504,7 @@ public class Principal extends Activity
 
     public void obtenerClase(String cod) {
         mButtonCapture.setEnabled(false);
-        String api = servidor.getServidor() + "asistencia/apis/clasesApi.php?ac=bultimaclaseaula&cod=" + cod;
+        String api = servidor.getServidor() + "apis/clasesApi.php?ac=bultimaclaseaula&cod=" + cod;
         //  Toast.makeText(getApplicationContext(), api, Toast.LENGTH_LONG).show();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
             @Override
@@ -560,7 +560,7 @@ public class Principal extends Activity
     }
 
     public void marcarAsistencia() {
-        String url = servidor.getServidor() + "asistencia/apis/asistenciaApi.php";
+        String url = servidor.getServidor() + "apis/asistenciaApi.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
