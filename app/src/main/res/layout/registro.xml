@@ -136,7 +136,7 @@
         android:layout_height="33dp"
         android:layout_x="29dp"
         android:layout_y="20dp"
-        android:text="CodAlu:"
+        android:text="DNI:"
         android:textSize="20sp"
         android:textStyle="bold" />
 

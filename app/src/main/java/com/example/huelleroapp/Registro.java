@@ -349,7 +349,7 @@ public class Registro extends Activity
         String NFIQString = "";
         if (result == SGFDxErrorCode.SGFDX_ERROR_NONE) {
             DumpFile("capture2016.raw", imagen2);
-            mTextViewResult.setText("Huella 2 capturada\n");
+            mTextViewResult.setText("Huella 1 capturada\n");
             mImageViewFingerprint.setImageBitmap(this.toGrayscale(imagen1));
         }
 
@@ -414,7 +414,7 @@ public class Registro extends Activity
         if (v == btnReg) {
             AlertDialog.Builder dialogo1 = new AlertDialog.Builder(this);
             dialogo1.setTitle("Importante");
-            dialogo1.setMessage("¿ Desea actualizar las huellas del alumno?");
+            dialogo1.setMessage("¿ Desea actualizar las huellas del Docente?");
             dialogo1.setCancelable(false);
             dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialogo1, int id) {
