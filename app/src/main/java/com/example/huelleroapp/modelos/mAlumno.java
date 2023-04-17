@@ -13,7 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.huelleroapp.Principal;
-import com.example.huelleroapp.clases.cAlumno;
+import com.example.huelleroapp.clases.cDocente;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,12 +39,14 @@ public class mAlumno {
                     for (int i = 0; i < response.length() ; i++) {
                         jsonObject = response.getJSONObject(i);
                         //Toast.makeText(getApplicationContext(), jsonObject.length(), Toast.LENGTH_LONG).show();
-                        String codAlu = jsonObject.getString("codAlu");
-                        String alu = jsonObject.getString("alu");
+                        String idDoc = jsonObject.getString("idDoc");
+                        String dniDoc = jsonObject.getString("dniDoc");
+                        String alu = jsonObject.getString("doc");
                         String imghuella1 = jsonObject.getString("imghuella1");
                         String imghuella2 = jsonObject.getString("imghuella2");
+                        String foto = jsonObject.getString("foto");
 
-                        cAlumno dato = new cAlumno(codAlu, alu, imghuella1, imghuella2);
+                        cDocente dato = new cDocente(idDoc,dniDoc, alu, imghuella1, imghuella2,foto);
 
                        // Principal.listaAlumnos.add(dato);
                         //  Toast.makeText(getApplicationContext(),datos.get(i).toString(), Toast.LENGTH_LONG).show();

@@ -34,7 +34,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.huelleroapp.clases.cAlumno;
+import com.example.huelleroapp.clases.cDocente;
 import com.example.huelleroapp.clases.config;
 import com.example.huelleroapp.modelos.mAlumno;
 
@@ -90,9 +90,8 @@ public class Registro extends Activity
     private boolean bSecuGenDeviceOpened;
     private JSGFPLib sgfplib;
     private boolean usbPermissionRequested;
-    static public cAlumno alumno;
+    static public cDocente alumno;
     RequestQueue requestQueu;
-    private mAlumno modelo;
     private config servidor;
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,17 +148,13 @@ public class Registro extends Activity
         btnComp.setOnClickListener(this);
         btnBuscar = (Button) findViewById(R.id.btnbuscar);
         btnBuscar.setOnClickListener(this);
-
         btnReg = (Button) findViewById(R.id.btnGuardar);
         btnReg.setOnClickListener(this);
-
         mEditLog = (EditText) findViewById(R.id.editLog);
         mTextViewResult = (TextView) findViewById(R.id.textViewResult);
         txtnomAlu = (TextView) findViewById(R.id.txtdatoClase);
-
         mImageViewFingerprint = (ImageView) findViewById(R.id.imageViewFingerprint);
         mtemp = (ImageView) findViewById(R.id.imgtemp);
-
         grayBuffer = new int[JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES * JSGFPLib.MAX_IMAGE_HEIGHT_ALL_DEVICES];
         for (int i = 0; i < grayBuffer.length; ++i)
             grayBuffer[i] = Color.GRAY;
@@ -172,24 +167,19 @@ public class Registro extends Activity
             sintbuffer[i] = Color.GRAY;
         Bitmap sb = Bitmap.createBitmap(JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES / 2, JSGFPLib.MAX_IMAGE_HEIGHT_ALL_DEVICES / 2, Bitmap.Config.ARGB_8888);
         sb.setPixels(sintbuffer, 0, JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES / 2, 0, 0, JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES / 2, JSGFPLib.MAX_IMAGE_HEIGHT_ALL_DEVICES / 2);
-
         mMaxTemplateSize = new int[1];
-
         //USB Permissions
         mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         filter = new IntentFilter(ACTION_USB_PERMISSION);
         sgfplib = new JSGFPLib((UsbManager) getSystemService(Context.USB_SERVICE));
         bSecuGenDeviceOpened = false;
         usbPermissionRequested = false;
-
         debugMessage("Starting Activity\n");
         debugMessage("JSGFPLib version: " + sgfplib.GetJSGFPLibVersion() + "\n");
         mLed = false;
         mAutoOnEnabled = false;
         autoOn = new SGAutoOnEventNotifier(sgfplib, this);
         Log.d(TAG, "Exit onCreate()");
-
-
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,12 +193,10 @@ public class Registro extends Activity
             bSecuGenDeviceOpened = false;
         }
         unregisterReceiver(mUsbReceiver);
-
         mImageViewFingerprint.setImageBitmap(grayBitmap);
         super.onPause();
         Log.d(TAG, "Exit onPause()");
     }
-
     @Override
     public void onResume() {
         Log.d(TAG, "Enter onResume()");
@@ -446,11 +434,13 @@ public class Registro extends Activity
                     for (int i = 0; i < response.length(); i++) {
                         jsonObject = response.getJSONObject(i);
                         //Toast.makeText(getApplicationContext(), jsonObject.length(), Toast.LENGTH_LONG).show();
-                        String codAlu = jsonObject.getString("codAlu");
-                        String alu = jsonObject.getString("nomAlu") + " " + jsonObject.getString("apepaAlu") + " " + jsonObject.getString("apemaAlu");
+                        String id = jsonObject.getString("idDoc");
+                        String dniDoc = jsonObject.getString("dniDoc");
+                        String alu = jsonObject.getString("nomDoc") + " " + jsonObject.getString("apepaDoc") + " " + jsonObject.getString("apemaDoc");
                         String imghuella1 = jsonObject.getString("imghuella1");
                         String imghuella2 = jsonObject.getString("imghuella2");
-                        Registro.alumno = new cAlumno(codAlu, alu, imghuella1, imghuella2);
+                        String foto = jsonObject.getString("foto");
+                        Registro.alumno = new cDocente(id, dniDoc, alu, imghuella1, imghuella2, foto);
                         txtnomAlu.setText(alu);
 
                     }
@@ -473,22 +463,22 @@ public class Registro extends Activity
     }
 
     public void guardar(String server) {
-        String url = server + "apis/alumnosApi.php";
+        String url = server + "app2/apis/apiDocente.php";
         Toast.makeText(this, url, Toast.LENGTH_LONG).show();
         try {
-            String h1=Base64.encodeToString(imagen1, Base64.DEFAULT);
-            String h2=Base64.encodeToString(imagen2, Base64.DEFAULT);
+            String h1 = Base64.encodeToString(imagen1, Base64.DEFAULT);
+            String h2 = Base64.encodeToString(imagen2, Base64.DEFAULT);
             alumno.setImghuella1(h1);
-           alumno.setImghuella2(h2);
+            alumno.setImghuella2(h2);
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             mTextViewResult.setText(e.getMessage());
         }
-       StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
- }
+            }
 
         }, new Response.ErrorListener() {
             @Override
@@ -500,7 +490,7 @@ public class Registro extends Activity
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parametros = new HashMap<String, String>();
                 parametros.put("ac", "recapp");
-                parametros.put("0", alumno.getCodigo());
+                parametros.put("0", alumno.getIdDoc());
                 parametros.put("1", alumno.getImghuella1());
                 parametros.put("2", alumno.getImghuella2());
                 return parametros;

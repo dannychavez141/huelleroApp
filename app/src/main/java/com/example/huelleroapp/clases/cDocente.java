@@ -21,9 +21,10 @@ import org.json.JSONObject;
 import java.sql.Blob;
 import java.util.Vector;
 
-public class cAlumno {
+public class cDocente {
 
-    private String codigo;
+    private String idDoc;
+    private String dniDoc;
     private String nombres;
     private String apepa;
     private String apema;
@@ -32,19 +33,9 @@ public class cAlumno {
     private String imghuella2;
     private String foto;
 
-    public cAlumno(String codigo, String nombres, String imghuella1, String imghuella2, String foto) {
-        this.codigo = codigo;
-        this.nombres = nombres;
-        this.imghuella1 = imghuella1;
-        this.imghuella2 = imghuella2;
-        this.foto = foto;
-    }
-
-    public cAlumno() {
-    }
-
-    public cAlumno(String codigo, String nombres, String apepa, String apema, String est, String imghuella1, String imghuella2, String foto) {
-        this.codigo = codigo;
+    public cDocente(String idDoc, String dniDoc, String nombres, String apepa, String apema, String est, String imghuella1, String imghuella2, String foto) {
+        this.idDoc = idDoc;
+        this.dniDoc = dniDoc;
         this.nombres = nombres;
         this.apepa = apepa;
         this.apema = apema;
@@ -54,37 +45,29 @@ public class cAlumno {
         this.foto = foto;
     }
 
-    public String getFoto() {
-        return foto;
-    }
-
-    public void setFoto(String foto) {
+    public cDocente(String idDoc, String dniDoc, String nombres, String imghuella1, String imghuella2, String foto) {
+        this.idDoc = idDoc;
+        this.dniDoc = dniDoc;
+        this.nombres = nombres;
+        this.imghuella1 = imghuella1;
+        this.imghuella2 = imghuella2;
         this.foto = foto;
     }
 
-    public cAlumno(String codigo, String nombres, String imghuella1, String imghuella2) {
-        this.codigo = codigo;
-        this.nombres = nombres;
-        this.imghuella1 = imghuella1;
-        this.imghuella2 = imghuella2;
+    public String getIdDoc() {
+        return idDoc;
     }
 
-    public cAlumno(String codigo, String nombres, String apepa, String apema, String est, String imghuella1, String imghuella2) {
-        this.codigo = codigo;
-        this.nombres = nombres;
-        this.apepa = apepa;
-        this.apema = apema;
-        this.est = est;
-        this.imghuella1 = imghuella1;
-        this.imghuella2 = imghuella2;
+    public void setIdDoc(String idDoc) {
+        this.idDoc = idDoc;
     }
 
-    public String getCodigo() {
-        return codigo;
+    public String getDniDoc() {
+        return dniDoc;
     }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public void setDniDoc(String dniDoc) {
+        this.dniDoc = dniDoc;
     }
 
     public String getNombres() {
@@ -135,9 +118,11 @@ public class cAlumno {
         this.imghuella2 = imghuella2;
     }
 
-    @Override
-    public String toString() {
-        return "mAlumno{" + "codigo=" + codigo + ", nombres=" + nombres  + ", imghuella1=" + imghuella1 + ", imghuella2=" + imghuella2 + '}';
+    public String getFoto() {
+        return foto;
     }
 
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
 }

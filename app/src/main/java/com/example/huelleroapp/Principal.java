@@ -46,7 +46,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.huelleroapp.clases.cAlumno;
+import com.example.huelleroapp.clases.cDocente;
 import com.example.huelleroapp.clases.cClase;
 import com.example.huelleroapp.clases.config;
 import com.example.huelleroapp.modelos.mAlumno;
@@ -84,15 +84,11 @@ public class Principal extends Activity
     private boolean bSecuGenDeviceOpened;
     private JSGFPLib sgfplib;
     private boolean usbPermissionRequested;
-    static public cAlumno[] alumnos;
+    static public cDocente[] alumnos;
     static public Vector listaAlumnos;
     RequestQueue requestQueu;
-    private mAlumno modelo;
     private config servidor;
-    private cClase clase;
-    private Spinner aulas;
-    ArrayAdapter<String> comboAdapter;
-    private cAlumno alumno;
+    private cDocente alumno;
     private MediaPlayer Sonidoentrada, Sonidoerror;
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,13 +168,7 @@ public class Principal extends Activity
         autoOn = new SGAutoOnEventNotifier(sgfplib, this);
         Log.d(TAG, "Exit onCreate()");
         servidor = new config(getApplicationContext());
-        aulas = findViewById(R.id.codAula);
-        String[] idaulas = new String[]{"1", "2", "3", "4", "5"};
-        ArrayList listaaulas = new ArrayList<>();
-        Collections.addAll(listaaulas, idaulas);
-        comboAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaaulas);
-        //Cargo el spinner con los datos
-        aulas.setAdapter(comboAdapter);
+
         mButtonCapture.setEnabled(false);
 
     }
@@ -365,11 +355,11 @@ public class Principal extends Activity
         return;
     }
 
-    public void llenaralumno(cAlumno alumno) {
+    public void llenaralumno(cDocente alumno) {
         this.marcarAsistencia();
         txtdatosalu.setText("");
-        txtdatosalu.append("Codigo: " + alumno.getCodigo() + "\n");
-        txtdatosalu.append("Alumno: \n" + alumno.getNombres() + "\n");
+        txtdatosalu.append("DNI: " + alumno.getDniDoc() + "\n");
+        txtdatosalu.append("Docente: \n" + alumno.getNombres() + "\n");
         foto = Base64.decode(alumno.getFoto(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(foto, 0, foto.length);
         mImageViewFingerprint.setImageBitmap(decodedByte);
@@ -447,8 +437,8 @@ public class Principal extends Activity
         }
 
         if (v == btnBuscar) {
-            this.obtenerClase(aulas.getSelectedItem().toString());
 
+            this.obtenerAlumnos();
 
         }
 
@@ -456,8 +446,8 @@ public class Principal extends Activity
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
-    public void obtenerAlumnos(String cod) {
-        String api = servidor.getServidor() + "apis/alumnosApi.php?ac=AAula&aula=" + cod;
+    public void obtenerAlumnos() {
+        String api = servidor.getServidor() + "app2/apis/apiDocente.php/ac=todosApp";
         //Toast.makeText(getApplicationContext(), api, Toast.LENGTH_LONG).show();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
             @Override
@@ -465,25 +455,25 @@ public class Principal extends Activity
                 JSONObject jsonObject = null;
                 //Toast.makeText(ctx, response.toString(), Toast.LENGTH_LONG).show();
                 try {
-
-                    alumnos = new cAlumno[response.length()];
+                    alumnos = new cDocente[response.length()];
                     for (int i = 0; i < response.length(); i++) {
                         jsonObject = response.getJSONObject(i);
                         //Toast.makeText(getApplicationContext(), jsonObject.length(), Toast.LENGTH_LONG).show();
-                        String codAlu = jsonObject.getString("codAlu");
-                        String alu = jsonObject.getString("alu");
+                        String idDoc = jsonObject.getString("idDoc");
+                        String dniDoc = jsonObject.getString("dniDoc");
+                        String alu = jsonObject.getString("nomDoc") + " " + jsonObject.getString("apepaDoc") + " " + jsonObject.getString("apemaDoc");
                         String foto = jsonObject.getString("foto");
                         String imghuella1 = jsonObject.getString("imghuella1");
                         String imghuella2 = jsonObject.getString("imghuella2");
-                        cAlumno alumno = new cAlumno(codAlu, alu, imghuella1, imghuella2, foto);
+                        cDocente docente = new cDocente(idDoc,dniDoc, alu, imghuella1, imghuella2, foto);
                         // txtnomAlu.setText(alu);
-                        alumnos[i] = alumno;
+                        alumnos[i] = docente;
                     }
 
-                    Toast.makeText(getApplicationContext(), "Clase obtenida", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Datos de Docentes Actualizada", Toast.LENGTH_SHORT).show();
                     mButtonCapture.setEnabled(true);
                 } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "No Existen Clases en el Aula.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "No Existen Registros.", Toast.LENGTH_LONG).show();
                     mButtonCapture.setEnabled(false);
 
                 }
@@ -494,7 +484,7 @@ public class Principal extends Activity
             @Override
             public void onErrorResponse(VolleyError error) {
                 //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), "No Existen Clases en el Aula.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "No Existen Registros", Toast.LENGTH_LONG).show();
             }
         });
         requestQueu = Volley.newRequestQueue(getApplicationContext());
@@ -502,65 +492,9 @@ public class Principal extends Activity
 
     }
 
-    public void obtenerClase(String cod) {
-        mButtonCapture.setEnabled(false);
-        String api = servidor.getServidor() + "apis/clasesApi.php?ac=bultimaclaseaula&cod=" + cod;
-        //  Toast.makeText(getApplicationContext(), api, Toast.LENGTH_LONG).show();
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                JSONObject jsonObject = null;
-                //Toast.makeText(ctx, response.toString(), Toast.LENGTH_LONG).show();
-                try {
-
-
-                    for (int i = 0; i < response.length(); i++) {
-                        jsonObject = response.getJSONObject(i);
-                        //Toast.makeText(getApplicationContext(), jsonObject.length(), Toast.LENGTH_LONG).show();
-                        String id, docente, curso, fecha, hini, hfin, aula, anio, est, asig;
-                        id = jsonObject.getString("idClase");
-                        asig = jsonObject.getString("idAsignacionDoc");
-                        docente = jsonObject.getString("nomDoc") + " " + jsonObject.getString("apepaDoc") + " " + jsonObject.getString("apemaDoc");
-                        curso = jsonObject.getString("20");
-                        fecha = jsonObject.getString("fechaClas");
-                        hini = jsonObject.getString("horClas");
-                        hfin = jsonObject.getString("cierre");
-                        aula = jsonObject.getString("descrAula");
-                        anio = jsonObject.getString("23");
-                        est = jsonObject.getString("est");
-
-
-                        clase = new cClase(id, asig, docente, curso, fecha, hini, hfin, aula, anio, est);
-                        txtnomAlu.setText("");
-                        txtnomAlu.append("Curso: " + curso + "\n");
-                        txtnomAlu.append("Docente : " + docente + "\n");
-                        txtnomAlu.append("Fecha : " + fecha + "\n");
-                        txtnomAlu.append("De : " + hini + " a " + hfin + "\n");
-                        txtnomAlu.append("Aula " + aula + " - " + anio + "\n");
-
-                    }
-                    obtenerAlumnos(cod);
-
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "No existen Clases en el Aula.", Toast.LENGTH_LONG).show();
-                }
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), "No Existen Clases en el Aula.", Toast.LENGTH_LONG).show();
-            }
-        });
-        requestQueu = Volley.newRequestQueue(getApplicationContext());
-        requestQueu.add(jsonArrayRequest);
-
-    }
 
     public void marcarAsistencia() {
-        String url = servidor.getServidor() + "apis/asistenciaApi.php";
+        String url = servidor.getServidor() + "app2/apis/apiAsistencia.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -586,8 +520,7 @@ public class Principal extends Activity
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parametros = new HashMap<String, String>();
                 parametros.put("ac", "reg");
-                parametros.put("idClase", clase.getId());
-                parametros.put("codAlu", alumno.getCodigo());
+                parametros.put("idDoc", alumno.getIdDoc());
 
 
                 return parametros;
