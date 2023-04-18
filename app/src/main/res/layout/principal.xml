@@ -40,17 +40,17 @@
         android:id="@+id/imageViewFingerprint"
         android:layout_width="158dp"
         android:layout_height="181dp"
-        android:layout_x="29dp"
-        android:layout_y="174dp"
+        android:layout_x="31dp"
+        android:layout_y="87dp"
         android:contentDescription="@string/fingerprint_capture_image"
         android:src="@android:drawable/picture_frame" />
 
     <TextView
         android:id="@+id/textViewResult"
-        android:layout_width="342dp"
-        android:layout_height="108dp"
-        android:layout_x="30dp"
-        android:layout_y="379dp"
+        android:layout_width="462dp"
+        android:layout_height="139dp"
+        android:layout_x="209dp"
+        android:layout_y="189dp"
         android:text="@string/welcome"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -58,40 +58,18 @@
         android:id="@+id/buttonCapture"
         android:layout_width="154dp"
         android:layout_height="84dp"
-        android:layout_x="245dp"
-        android:layout_y="155dp"
+        android:layout_x="204dp"
+        android:layout_y="89dp"
         android:text="Marcar Asistencia"
         android:textSize="16sp" />
-
-    <ToggleButton
-        android:id="@+id/ToggleButtonUSBBulkMode64"
-        android:layout_width="174dp"
-        android:layout_height="wrap_content"
-        android:layout_x="544dp"
-        android:layout_y="351dp"
-        android:text="@string/usb_bulk_mode_64_off"
-        android:textOff="@string/usb_bulk_mode_64_off"
-        android:textOn="@string/usb_bulk_mode_64_on"
-        android:visibility="invisible" />
-
-    <TextView
-        android:id="@+id/txtdatoClase"
-        android:layout_width="287dp"
-        android:layout_height="93dp"
-        android:layout_x="424dp"
-        android:layout_y="66dp"
-        android:text="------------------------"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtdatosAlu"
         android:layout_width="287dp"
         android:layout_height="93dp"
-        android:layout_x="424dp"
-        android:layout_y="186dp"
-        android:text="------------------------"
+        android:layout_x="373dp"
+        android:layout_y="86dp"
+        android:text="---------------"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -100,8 +78,8 @@
         android:id="@+id/btnbuscar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_x="119dp"
-        android:layout_y="39dp"
+        android:layout_x="28dp"
+        android:layout_y="22dp"
         android:text="CARGAR DOCENTES" />
 
 </AbsoluteLayout>

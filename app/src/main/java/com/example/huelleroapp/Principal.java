@@ -65,7 +65,7 @@ public class Principal extends Activity
     private static final int IMAGE_CAPTURE_QUALITY = 50;
     private Button mButtonCapture;
     private Button btnBuscar;
-    static public TextView txtnomAlu, txtdatosalu;
+    static public TextView txtdatosalu;
     private android.widget.TextView mTextViewResult;
     private PendingIntent mPermissionIntent;
     private ImageView mImageViewFingerprint;
@@ -76,8 +76,7 @@ public class Principal extends Activity
     private Bitmap grayBitmap;
     private IntentFilter filter; //2014-04-11
     private SGAutoOnEventNotifier autoOn;
-    private boolean mLed;
-    private boolean mAutoOnEnabled;
+    private boolean mAutoOnEnabled = true;
     private byte[] imagen1, imagen2, foto;
     private byte[] imagen1Template;
     private byte[] imagen2Template;
@@ -97,7 +96,7 @@ public class Principal extends Activity
 
     //This broadcast receiver is necessary to get user permissions to access the attached USB device
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
@@ -105,11 +104,12 @@ public class Principal extends Activity
                     UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if (device != null) {
-
+                            Log.i("appLog", "USB BroadcastReceiver VID : " + device.getVendorId());
+                            Log.i("appLog", "USB BroadcastReceiver PID: " + device.getProductId());
                         } else
-                            Log.e(TAG, "mUsbReceiver.onReceive() Device is null");
+                            Log.i("appLog", "mUsbReceiver.onReceive() Device is null");
                     } else
-                        Log.e(TAG, "mUsbReceiver.onReceive() permission denied for device " + device);
+                        Log.i("appLog", "mUsbReceiver.onReceive() permission denied for device " + device);
                 }
             }
         }
@@ -128,8 +128,7 @@ public class Principal extends Activity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Enter onCreate()");
-
+        Log.i("appLog", "Enter onCreate()");
         servidor = new config(this);
         Sonidoentrada = MediaPlayer.create(this, R.raw.ok);
         Sonidoerror = MediaPlayer.create(this, R.raw.error);
@@ -140,9 +139,11 @@ public class Principal extends Activity
         btnBuscar = (Button) findViewById(R.id.btnbuscar);
         btnBuscar.setOnClickListener(this);
         mTextViewResult = (TextView) findViewById(R.id.textViewResult);
-        txtnomAlu = (TextView) findViewById(R.id.txtdatoClase);
         txtdatosalu = (TextView) findViewById(R.id.txtdatosAlu);
+        servidor = new config(getApplicationContext());
+        mButtonCapture.setEnabled(false);
         mImageViewFingerprint = (ImageView) findViewById(R.id.imageViewFingerprint);
+        //configurarcion huellero
         grayBuffer = new int[JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES * JSGFPLib.MAX_IMAGE_HEIGHT_ALL_DEVICES];
         for (int i = 0; i < grayBuffer.length; ++i)
             grayBuffer[i] = Color.GRAY;
@@ -163,13 +164,10 @@ public class Principal extends Activity
         sgfplib = new JSGFPLib((UsbManager) getSystemService(Context.USB_SERVICE));
         bSecuGenDeviceOpened = false;
         usbPermissionRequested = false;
-        mLed = false;
         mAutoOnEnabled = false;
         autoOn = new SGAutoOnEventNotifier(sgfplib, this);
-        Log.d(TAG, "Exit onCreate()");
-        servidor = new config(getApplicationContext());
+        Log.i("appLog", "Exit onCreate()");
 
-        mButtonCapture.setEnabled(false);
 
     }
 
@@ -177,18 +175,18 @@ public class Principal extends Activity
     //////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void onPause() {
-        Log.d(TAG, "Enter onPause()");
+        Log.d("appLog", "Enter onPause()");
         if (bSecuGenDeviceOpened) {
             autoOn.stop();
             sgfplib.CloseDevice();
             bSecuGenDeviceOpened = false;
         }
         unregisterReceiver(mUsbReceiver);
-
         mImageViewFingerprint.setImageBitmap(grayBitmap);
         super.onPause();
-        Log.d(TAG, "Exit onPause()");
+        Log.d("appLog", "Exit onPause()");
     }
+
 
     @Override
     public void onResume() {
@@ -233,13 +231,13 @@ public class Principal extends Activity
                 boolean hasPermission = sgfplib.GetUsbManager().hasPermission(usbDevice);
                 if (!hasPermission) {
                     if (!usbPermissionRequested) {
-
+                        //debugMessage("Requesting USB Permission\n");
                         usbPermissionRequested = true;
                         sgfplib.GetUsbManager().requestPermission(usbDevice, mPermissionIntent);
                     } else {
                         //wait up to 20 seconds for the system to grant USB permission
                         hasPermission = sgfplib.GetUsbManager().hasPermission(usbDevice);
-
+                        //debugMessage("Waiting for USB Permission\n");
                         int i = 0;
                         while ((hasPermission == false) && (i <= 40)) {
                             ++i;
@@ -254,7 +252,9 @@ public class Principal extends Activity
                     }
                 }
                 if (hasPermission) {
+                    //debugMessage("Opening SecuGen Device\n");
                     error = sgfplib.OpenDevice(0);
+                    // debugMessage("OpenDevice() ret: " + error + "\n");
                     if (error == SGFDxErrorCode.SGFDX_ERROR_NONE) {
                         bSecuGenDeviceOpened = true;
                         SGDeviceInfoParam deviceInfo = new SGDeviceInfoParam();
@@ -265,11 +265,13 @@ public class Principal extends Activity
 
                         sgfplib.SetTemplateFormat(SGFDxTemplateFormat.TEMPLATE_FORMAT_SG400);
                         sgfplib.GetMaxTemplateSize(mMaxTemplateSize);
+                        // debugMessage("TEMPLATE_FORMAT_SG400 SIZE: " + mMaxTemplateSize[0] + "\n");
 
                         if (mAutoOnEnabled) {
                             autoOn.start();
                         }
                     } else {
+                        //debugMessage("Waiting for USB Permission\n");
                     }
                 }
                 //Thread thread = new Thread(this);
@@ -281,12 +283,11 @@ public class Principal extends Activity
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "Enter onDestroy()");
+        Log.i("appLog", "Enter onDestroy()");
         sgfplib.CloseDevice();
-
         sgfplib.Close();
         super.onDestroy();
-        Log.d(TAG, "Exit onDestroy()");
+        Log.i("appLog", "Exit onDestroy()");
     }
 
     //Converts image to grayscale (NEW)
@@ -315,43 +316,45 @@ public class Principal extends Activity
     //////////////////////////////////////////////////////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void captura1() {
+        // Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_SHORT).show();
+        mTextViewResult.setText("Por favor poner su dedo en el Huellero..");
+        //  try {
+        long result;
+        imagen1 = new byte[mImageWidth * mImageHeight];
 
-        try {
-            long result;
-            imagen1 = new byte[mImageWidth * mImageHeight];
-
-            result = sgfplib.GetImageEx(imagen1, IMAGE_CAPTURE_TIMEOUT_MS, IMAGE_CAPTURE_QUALITY);
+        result = sgfplib.GetImageEx(imagen1, IMAGE_CAPTURE_TIMEOUT_MS, IMAGE_CAPTURE_QUALITY);
 
         if (result == SGFDxErrorCode.SGFDX_ERROR_NONE) {
-           DumpFile("capture2016.raw", imagen1);
+            DumpFile("capture2016.raw", imagen1);
             mTextViewResult.setText("Huella  capturada\n");
             mImageViewFingerprint.setImageBitmap(this.toGrayscale(imagen1));
 
         }
         int pos = comparar();
-            if (pos > -1) {
-                Toast.makeText(getApplicationContext(), "Identificado", Toast.LENGTH_LONG).show();
-                alumno = alumnos[pos];
-                llenaralumno(alumno);
-            } else {
-                Toast.makeText(getApplicationContext(), "Alumno no identificado", Toast.LENGTH_LONG).show();
-                Sonidoerror.start();
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.unu);
-                        mImageViewFingerprint.setImageBitmap(logo);
-                        // Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_LONG).show();
-                        txtdatosalu.setText("______________");
-                        mTextViewResult.setText("--------------");
-                    }
-                }, 3000);
-            }
-
-        }catch (Exception e){
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        if (pos > -1) {
+            Toast.makeText(getApplicationContext(), "Identificado", Toast.LENGTH_LONG).show();
+            alumno = alumnos[pos];
+            llenaralumno(alumno);
+        } else {
+            Toast.makeText(getApplicationContext(), "Alumno no identificado", Toast.LENGTH_LONG).show();
+            Sonidoerror.start();
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.unu);
+                    mImageViewFingerprint.setImageBitmap(logo);
+                    //    Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_LONG).show();
+                    txtdatosalu.setText("______________");
+                    mTextViewResult.setText("--------------");
+                }
+            }, 3000);
         }
+
+       /* }catch (Exception e){
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.i("appLog",e.getMessage());
+        }*/
         return;
     }
 
@@ -369,7 +372,7 @@ public class Principal extends Activity
             public void run() {
                 Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.unu);
                 mImageViewFingerprint.setImageBitmap(logo);
-               // Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_LONG).show();
+                // Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_LONG).show();
                 txtdatosalu.setText("______________");
                 mTextViewResult.setText("--------------");
             }
@@ -438,7 +441,7 @@ public class Principal extends Activity
 
         if (v == btnBuscar) {
 
-            this.obtenerAlumnos();
+            this.obtenerDocentes();
 
         }
 
@@ -446,9 +449,11 @@ public class Principal extends Activity
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
-    public void obtenerAlumnos() {
-        String api = servidor.getServidor() + "app2/apis/apiDocente.php/ac=todosApp";
+    public void obtenerDocentes() {
+        String api = servidor.getServidor() + "app2/apis/apiDocente.php?ac=todosApp";
         //Toast.makeText(getApplicationContext(), api, Toast.LENGTH_LONG).show();
+        // Log.i("appLog",api);
+        mTextViewResult.setText("Por favor espere, descargando datos...");
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -465,12 +470,13 @@ public class Principal extends Activity
                         String foto = jsonObject.getString("foto");
                         String imghuella1 = jsonObject.getString("imghuella1");
                         String imghuella2 = jsonObject.getString("imghuella2");
-                        cDocente docente = new cDocente(idDoc,dniDoc, alu, imghuella1, imghuella2, foto);
+                        cDocente docente = new cDocente(idDoc, dniDoc, alu, imghuella1, imghuella2, foto);
                         // txtnomAlu.setText(alu);
                         alumnos[i] = docente;
                     }
 
                     Toast.makeText(getApplicationContext(), "Datos de Docentes Actualizada", Toast.LENGTH_SHORT).show();
+                    mTextViewResult.setText("Bienvenido.");
                     mButtonCapture.setEnabled(true);
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "No Existen Registros.", Toast.LENGTH_LONG).show();
@@ -500,13 +506,14 @@ public class Principal extends Activity
             public void onResponse(String response) {
 
                 mTextViewResult.setText(response);
+                Log.i("appLog", response);
                 if (response.equals("USTED YA MARCO SU ASISTENCIA Y SU SALIDA")) {
                     Sonidoerror.start();
                 } else {
                     Sonidoentrada.start();
                 }
 
-               // Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                // Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                 // Log.i("sql",response);
             }
 

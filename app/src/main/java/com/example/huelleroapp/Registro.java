@@ -65,19 +65,15 @@ public class Registro extends Activity
     private Button mButtonCapture;
     private Button btntemp, btnComp, btnBuscar;
     private Button btnReg;
-    private EditText mEditLog;
     private EditText txtcodAlu;
     static public TextView txtnomAlu;
     private android.widget.TextView mTextViewResult;
-
-    private android.widget.ToggleButton mToggleButtonUSBBulkMode64;
     private PendingIntent mPermissionIntent;
     private ImageView mImageViewFingerprint;
     private ImageView mtemp;
     private int[] mMaxTemplateSize;
     private int mImageWidth;
     private int mImageHeight;
-    private int mImageDPI;
     private int[] grayBuffer;
     private Bitmap grayBitmap;
     private IntentFilter filter; //2014-04-11
@@ -96,10 +92,7 @@ public class Registro extends Activity
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
-    private void debugMessage(String message) {
-        this.mEditLog.append(message);
-        this.mEditLog.invalidate(); //TODO trying to get Edit log to update after each line written
-    }
+
 
     //This broadcast receiver is necessary to get user permissions to access the attached USB device
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
@@ -111,8 +104,8 @@ public class Registro extends Activity
                     UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if (device != null) {
-                            debugMessage("USB BroadcastReceiver VID : " + device.getVendorId() + "\n");
-                            debugMessage("USB BroadcastReceiver PID: " + device.getProductId() + "\n");
+                         //   debugMessage("USB BroadcastReceiver VID : " + device.getVendorId() + "\n");
+                          //  debugMessage("USB BroadcastReceiver PID: " + device.getProductId() + "\n");
                         } else
                             Log.e(TAG, "mUsbReceiver.onReceive() Device is null");
                     } else
@@ -150,7 +143,6 @@ public class Registro extends Activity
         btnBuscar.setOnClickListener(this);
         btnReg = (Button) findViewById(R.id.btnGuardar);
         btnReg.setOnClickListener(this);
-        mEditLog = (EditText) findViewById(R.id.editLog);
         mTextViewResult = (TextView) findViewById(R.id.textViewResult);
         txtnomAlu = (TextView) findViewById(R.id.txtdatoClase);
         mImageViewFingerprint = (ImageView) findViewById(R.id.imageViewFingerprint);
@@ -174,8 +166,8 @@ public class Registro extends Activity
         sgfplib = new JSGFPLib((UsbManager) getSystemService(Context.USB_SERVICE));
         bSecuGenDeviceOpened = false;
         usbPermissionRequested = false;
-        debugMessage("Starting Activity\n");
-        debugMessage("JSGFPLib version: " + sgfplib.GetJSGFPLibVersion() + "\n");
+       // debugMessage("Starting Activity\n");
+     //   debugMessage("JSGFPLib version: " + sgfplib.GetJSGFPLibVersion() + "\n");
         mLed = false;
         mAutoOnEnabled = false;
         autoOn = new SGAutoOnEventNotifier(sgfplib, this);
@@ -240,13 +232,13 @@ public class Registro extends Activity
                 boolean hasPermission = sgfplib.GetUsbManager().hasPermission(usbDevice);
                 if (!hasPermission) {
                     if (!usbPermissionRequested) {
-                        debugMessage("Requesting USB Permission\n");
+                        //debugMessage("Requesting USB Permission\n");
                         usbPermissionRequested = true;
                         sgfplib.GetUsbManager().requestPermission(usbDevice, mPermissionIntent);
                     } else {
                         //wait up to 20 seconds for the system to grant USB permission
                         hasPermission = sgfplib.GetUsbManager().hasPermission(usbDevice);
-                        debugMessage("Waiting for USB Permission\n");
+                        //debugMessage("Waiting for USB Permission\n");
                         int i = 0;
                         while ((hasPermission == false) && (i <= 40)) {
                             ++i;
@@ -261,32 +253,31 @@ public class Registro extends Activity
                     }
                 }
                 if (hasPermission) {
-                    debugMessage("Opening SecuGen Device\n");
+                    //debugMessage("Opening SecuGen Device\n");
                     error = sgfplib.OpenDevice(0);
-                    debugMessage("OpenDevice() ret: " + error + "\n");
+                   // debugMessage("OpenDevice() ret: " + error + "\n");
                     if (error == SGFDxErrorCode.SGFDX_ERROR_NONE) {
                         bSecuGenDeviceOpened = true;
                         SGDeviceInfoParam deviceInfo = new SGDeviceInfoParam();
                         error = sgfplib.GetDeviceInfo(deviceInfo);
 
-                        debugMessage("GetDeviceInfo() ret: " + error + "\n");
+                      //  debugMessage("GetDeviceInfo() ret: " + error + "\n");
                         mImageWidth = deviceInfo.imageWidth;
                         mImageHeight = deviceInfo.imageHeight;
-                        mImageDPI = deviceInfo.imageDPI;
-                        debugMessage("Image width: " + mImageWidth + "\n");
-                        debugMessage("Image height: " + mImageHeight + "\n");
-                        debugMessage("Image resolution: " + mImageDPI + "\n");
-                        debugMessage("Serial Number: " + new String(deviceInfo.deviceSN()) + "\n");
+                      //  debugMessage("Image width: " + mImageWidth + "\n");
+                      //  debugMessage("Image height: " + mImageHeight + "\n");
+                     //   debugMessage("Image resolution: " + mImageDPI + "\n");
+                      //  debugMessage("Serial Number: " + new String(deviceInfo.deviceSN()) + "\n");
 
                         sgfplib.SetTemplateFormat(SGFDxTemplateFormat.TEMPLATE_FORMAT_SG400);
                         sgfplib.GetMaxTemplateSize(mMaxTemplateSize);
-                        debugMessage("TEMPLATE_FORMAT_SG400 SIZE: " + mMaxTemplateSize[0] + "\n");
+                       // debugMessage("TEMPLATE_FORMAT_SG400 SIZE: " + mMaxTemplateSize[0] + "\n");
 
                         if (mAutoOnEnabled) {
                             autoOn.start();
                         }
                     } else {
-                        debugMessage("Waiting for USB Permission\n");
+                        //debugMessage("Waiting for USB Permission\n");
                     }
                 }
                 //Thread thread = new Thread(this);
@@ -421,7 +412,7 @@ public class Registro extends Activity
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     public void obtenerAlumnos(Context ctx, String cod, String server) {
-        String api = server + "apis/alumnosApi.php?ac=buno&cod=" + cod;
+        String api = server + "app2/apis/apiDocente.php?ac=buno&cod=" + cod;
         Toast.makeText(ctx, api, Toast.LENGTH_LONG).show();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
             @Override
