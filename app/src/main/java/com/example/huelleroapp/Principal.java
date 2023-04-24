@@ -120,8 +120,9 @@ public class Principal extends Activity
         @RequiresApi(api = Build.VERSION_CODES.O)
         public void handleMessage(Message msg) {
             //Handle the message
-            captura1();
+
             if (mAutoOnEnabled) {
+                captura1();
             }
         }
     };

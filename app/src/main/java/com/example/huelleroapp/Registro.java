@@ -412,8 +412,9 @@ public class Registro extends Activity
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     public void obtenerAlumnos(Context ctx, String cod, String server) {
-        String api = server + "app2/apis/apiDocente.php?ac=buno&cod=" + cod;
-        Toast.makeText(ctx, api, Toast.LENGTH_LONG).show();
+        String api = server + "app2/apis/apiDocente.php?ac=bDni&dniDoc=" + cod;
+        Log.i("appLog",api);
+       // Toast.makeText(ctx, api, Toast.LENGTH_LONG).show();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -435,7 +436,7 @@ public class Registro extends Activity
                         txtnomAlu.setText(alu);
 
                     }
-                    Toast.makeText(ctx, "alumnos obtenidos", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ctx, "Docente Encontrado", Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
                     Toast.makeText(ctx, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -455,7 +456,7 @@ public class Registro extends Activity
 
     public void guardar(String server) {
         String url = server + "app2/apis/apiDocente.php";
-        Toast.makeText(this, url, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, url, Toast.LENGTH_LONG).show();
         try {
             String h1 = Base64.encodeToString(imagen1, Base64.DEFAULT);
             String h2 = Base64.encodeToString(imagen2, Base64.DEFAULT);
@@ -468,7 +469,8 @@ public class Registro extends Activity
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                Log.i("appLog", response);
             }
 
         }, new Response.ErrorListener() {
