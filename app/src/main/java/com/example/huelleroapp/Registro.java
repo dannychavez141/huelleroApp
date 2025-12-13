@@ -9,9 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-
 import android.graphics.Color;
-
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
@@ -36,7 +34,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.huelleroapp.clases.cDocente;
 import com.example.huelleroapp.clases.config;
-import com.example.huelleroapp.modelos.mAlumno;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,7 +64,7 @@ public class Registro extends Activity
     private Button btnReg;
     private EditText txtcodAlu;
     static public TextView txtnomAlu;
-    private android.widget.TextView mTextViewResult;
+    private TextView mTextViewResult;
     private PendingIntent mPermissionIntent;
     private ImageView mImageViewFingerprint;
     private ImageView mtemp;

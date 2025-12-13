@@ -1,21 +1,16 @@
 package com.example.huelleroapp;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.BroadcastReceiver;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
@@ -27,12 +22,8 @@ import android.os.Message;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,13 +38,16 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.huelleroapp.clases.cDocente;
-import com.example.huelleroapp.clases.cClase;
 import com.example.huelleroapp.clases.config;
-import com.example.huelleroapp.modelos.mAlumno;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 import SecuGen.FDxSDKPro.*;
 
@@ -66,7 +60,7 @@ public class Principal extends Activity
     private Button mButtonCapture;
     private Button btnBuscar;
     static public TextView txtdatosalu;
-    private android.widget.TextView mTextViewResult;
+    private TextView mTextViewResult;
     private PendingIntent mPermissionIntent;
     private ImageView mImageViewFingerprint;
     private int[] mMaxTemplateSize;
@@ -317,46 +311,48 @@ public class Principal extends Activity
     //////////////////////////////////////////////////////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void captura1() {
-        // Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_SHORT).show();
-        mTextViewResult.setText("Por favor poner su dedo en el Huellero..");
-        //  try {
-        long result;
-        imagen1 = new byte[mImageWidth * mImageHeight];
+        try {
+            mTextViewResult.setText("Por favor poner su dedo en el Huellero..");
+            //  try {
+            long result;
+            imagen1 = new byte[mImageWidth * mImageHeight];
 
-        result = sgfplib.GetImageEx(imagen1, IMAGE_CAPTURE_TIMEOUT_MS, IMAGE_CAPTURE_QUALITY);
+            result = sgfplib.GetImageEx(imagen1, IMAGE_CAPTURE_TIMEOUT_MS, IMAGE_CAPTURE_QUALITY);
 
-        if (result == SGFDxErrorCode.SGFDX_ERROR_NONE) {
-            DumpFile("capture2016.raw", imagen1);
-            mTextViewResult.setText("Huella  capturada\n");
-            mImageViewFingerprint.setImageBitmap(this.toGrayscale(imagen1));
+            if (result == SGFDxErrorCode.SGFDX_ERROR_NONE) {
+                DumpFile("capture2016.raw", imagen1);
+                mTextViewResult.setText("Huella  capturada\n");
+                mImageViewFingerprint.setImageBitmap(this.toGrayscale(imagen1));
 
+            }
+            int pos = comparar();
+            if (pos > -1) {
+                Toast.makeText(getApplicationContext(), "Identificado", Toast.LENGTH_LONG).show();
+                alumno = alumnos[pos];
+                llenaralumno(alumno);
+            } else {
+                Toast.makeText(getApplicationContext(), "Alumno no identificado", Toast.LENGTH_LONG).show();
+                Sonidoerror.start();
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.unu);
+                        mImageViewFingerprint.setImageBitmap(logo);
+                        //    Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_LONG).show();
+                        txtdatosalu.setText("______________");
+                        mTextViewResult.setText("--------------");
+                    }
+                }, 3000);
+            }
+
+
+            return;
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-        int pos = comparar();
-        if (pos > -1) {
-            Toast.makeText(getApplicationContext(), "Identificado", Toast.LENGTH_LONG).show();
-            alumno = alumnos[pos];
-            llenaralumno(alumno);
-        } else {
-            Toast.makeText(getApplicationContext(), "Alumno no identificado", Toast.LENGTH_LONG).show();
-            Sonidoerror.start();
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.unu);
-                    mImageViewFingerprint.setImageBitmap(logo);
-                    //    Toast.makeText(getApplicationContext(), "Por favor poner su dedo en el Huellero..", Toast.LENGTH_LONG).show();
-                    txtdatosalu.setText("______________");
-                    mTextViewResult.setText("--------------");
-                }
-            }, 3000);
-        }
+        //
 
-       /* }catch (Exception e){
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            Log.i("appLog",e.getMessage());
-        }*/
-        return;
     }
 
     public void llenaralumno(cDocente alumno) {

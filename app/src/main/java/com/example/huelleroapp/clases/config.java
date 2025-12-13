@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class config {
-    private String servidor = "http://192.168.1.48/asistencia/";
+    private String servidor = "http://asistenciaunu.ccpu.org.pe/";
     Context con;
     SharedPreferences appSettings;
     public config(Context con) {
