@@ -1,5 +1,6 @@
 package com.example.huelleroapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -154,9 +155,9 @@ public class Principal extends Activity
         sb.setPixels(sintbuffer, 0, JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES / 2, 0, 0, JSGFPLib.MAX_IMAGE_WIDTH_ALL_DEVICES / 2, JSGFPLib.MAX_IMAGE_HEIGHT_ALL_DEVICES / 2);
         mMaxTemplateSize = new int[1];
         //USB Permissions
-        mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+        mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
         filter = new IntentFilter(ACTION_USB_PERMISSION);
-        sgfplib = new JSGFPLib((UsbManager) getSystemService(Context.USB_SERVICE));
+        sgfplib = new JSGFPLib(  this, (UsbManager)getSystemService(Context.USB_SERVICE));
         bSecuGenDeviceOpened = false;
         usbPermissionRequested = false;
         mAutoOnEnabled = false;
@@ -183,6 +184,7 @@ public class Principal extends Activity
     }
 
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     public void onResume() {
         Log.d(TAG, "Enter onResume()");

@@ -240,7 +240,7 @@ public class MainActivity extends Activity
         //USB Permissions
         mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         filter = new IntentFilter(ACTION_USB_PERMISSION);
-        sgfplib = new JSGFPLib((UsbManager)getSystemService(Context.USB_SERVICE));
+        sgfplib = new JSGFPLib(  this, (UsbManager)getSystemService(Context.USB_SERVICE));
         this.mToggleButtonSmartCapture.toggle();
         bSecuGenDeviceOpened = false;
         usbPermissionRequested = false;
@@ -857,7 +857,7 @@ public class MainActivity extends Activity
             return;
         }
 
-        JSGFPLib sgFplibSDKTest = new JSGFPLib((UsbManager)getSystemService(Context.USB_SERVICE));
+        JSGFPLib sgFplibSDKTest = new JSGFPLib(  this, (UsbManager)getSystemService(Context.USB_SERVICE));
 
         error = sgFplibSDKTest.InitEx( X_SIZE, Y_SIZE, 500);
         debugMessage("InitEx("+ X_SIZE + "," + Y_SIZE + ",500) ret:" +  error + "\n");

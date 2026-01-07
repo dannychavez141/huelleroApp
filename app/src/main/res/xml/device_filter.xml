@@ -6,6 +6,8 @@
     <usb-device vendor-id="4450" product-id="8192" />
     <!--SecuGen U20  0x1162 0x2200-->
     <usb-device	vendor-id="4450" product-id="8704" />
+    <!--SecuGen U20-2  0x1162 0x22BA-->
+    <usb-device	vendor-id="4450" product-id="8890" />
     <!--SecuGen UPx  0x1162 0x2201-->
     <usb-device	vendor-id="4450" product-id="8705" />
     <!--SecuGen U10  0x1162 0x2203-->
@@ -14,4 +16,12 @@
     <usb-device	vendor-id="4450" product-id="8736" />
     <!--SecuGen U20-A  0x1162 0x2240-->
     <usb-device	vendor-id="4450" product-id="8768" />
+    <!--SecuGen U20-AP-A  0x1162 0x2360-->
+    <usb-device	vendor-id="4450" product-id="9056" />
+    <!--SecuGen U30-A  0x1162 0x2410-->
+    <usb-device	vendor-id="4450" product-id="9232" />
+    <!--SecuGen U-AIR  0x1162 0x2500-->
+    <usb-device	vendor-id="4450" product-id="9472" />
+    <!--SecuGen UPx-AP  0x1162 0x2500-->
+    <usb-device	vendor-id="4450" product-id="8976" />
 </resources>
